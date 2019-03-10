@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import classes from "./App.css";
-import Person from "./Person/Person";
-import ErrorBoundary from "./ErrorBoundary/ErrorBoundary";
+import Persons from "../components/Persons/Persons";
+import Cockpit from "../components/Cockpit/Cockpit";
 
 const app = () => {
   const [personsState, setPersonsState] = useState({
@@ -52,43 +52,24 @@ const app = () => {
   };
 
   let persons = null;
-  let btnClass = "";
+
   if (personsState.showPersons) {
     persons = (
-      <div>
-        {personsState.persons.map((person, index) => {
-          return (
-            <ErrorBoundary key={person.id}>
-              <Person
-                click={deletePersonHandler.bind(this, index)}
-                name={person.name}
-                age={person.age}
-                changed={event => nameChangedHanler(event, person.id)}
-              />
-            </ErrorBoundary>
-          );
-        })}
-      </div>
+      <Persons
+        persons={personsState.persons}
+        clicked={deletePersonHandler}
+        changed={nameChangedHanler}
+      />
     );
-    btnClass = classes.Red;
-  }
-
-  const assignedClasses = [];
-  if (personsState.persons.length <= 2) {
-    assignedClasses.push(classes.red);
-  }
-
-  if (personsState.persons.length <= 1) {
-    assignedClasses.push(classes.bold);
   }
 
   return (
     <div className={classes.App}>
-      <h1>Hi, I'm a React App</h1>
-      <p className={assignedClasses.join(" ")}>This is really working!</p>
-      <button className={btnClass} onClick={() => togglePersonsHandler()}>
-        Toggle Persons
-      </button>
+      <Cockpit
+        showPersons={personsState.showPersons}
+        persons={personsState.persons}
+        clicked={togglePersonsHandler}
+      />
       {persons}
     </div>
   );
