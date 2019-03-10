@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import "./App.css";
+import classes from "./App.css";
 import Person from "./Person/Person";
-import { StyleRoot } from "radium";
+import ErrorBoundary from "./ErrorBoundary/ErrorBoundary";
 
 const app = () => {
   const [personsState, setPersonsState] = useState({
@@ -23,19 +23,6 @@ const app = () => {
       persons: persons,
       showPersons: personsState.showPersons
     });
-  };
-
-  const style = {
-    backgroundColor: "green",
-    color: "white",
-    font: "inherit",
-    border: "1px solid blue",
-    padding: "8px",
-    curson: "pointer"
-    // ":hover": {
-    //   backgroundColor: "lightgreen",
-    //   color: "black"
-    // }
   };
 
   const togglePersonsHandler = event => {
@@ -65,49 +52,45 @@ const app = () => {
   };
 
   let persons = null;
+  let btnClass = "";
   if (personsState.showPersons) {
     persons = (
       <div>
         {personsState.persons.map((person, index) => {
           return (
-            <Person
-              click={deletePersonHandler.bind(this, index)}
-              name={person.name}
-              age={person.age}
-              key={person.id}
-              changed={event => nameChangedHanler(event, person.id)}
-            />
+            <ErrorBoundary key={person.id}>
+              <Person
+                click={deletePersonHandler.bind(this, index)}
+                name={person.name}
+                age={person.age}
+                changed={event => nameChangedHanler(event, person.id)}
+              />
+            </ErrorBoundary>
           );
         })}
       </div>
     );
-    style.backgroundColor = "red";
-    // style[":hover"] = {
-    //   backgroundColor: "lightgreen",
-    //   color: "black"
-    // };
+    btnClass = classes.Red;
   }
 
-  const classes = [];
+  const assignedClasses = [];
   if (personsState.persons.length <= 2) {
-    classes.push("red");
+    assignedClasses.push(classes.red);
   }
 
   if (personsState.persons.length <= 1) {
-    classes.push("bold");
+    assignedClasses.push(classes.bold);
   }
 
   return (
-    <StyleRoot>
-      <div className="App">
-        <h1>Hi, I'm a React App</h1>
-        <p className={classes.join(" ")}>This is really working!</p>
-        <button style={style} onClick={() => togglePersonsHandler()}>
-          Toggle Persons
-        </button>
-        {persons}
-      </div>
-    </StyleRoot>
+    <div className={classes.App}>
+      <h1>Hi, I'm a React App</h1>
+      <p className={assignedClasses.join(" ")}>This is really working!</p>
+      <button className={btnClass} onClick={() => togglePersonsHandler()}>
+        Toggle Persons
+      </button>
+      {persons}
+    </div>
   );
   // return React.createElement('div', {className: 'App'}, React.createElement('h1', null, 'Hi, I\'m a React App!!!'));
 };
