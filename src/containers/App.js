@@ -4,6 +4,7 @@ import Persons from "../components/Persons/Persons";
 import Cockpit from "../components/Cockpit/Cockpit";
 import Aux from "../hoc/Auxiliar";
 import withClass from "../hoc/withClass";
+import AuthContext from "../contex/auth-contex";
 
 class App extends Component {
   constructor(props) {
@@ -19,7 +20,8 @@ class App extends Component {
     ],
     otherState: "some other value",
     showPersons: false,
-    changeCounter: 0
+    changeCounter: 0,
+    authenticated: false
   };
 
   // console.log(personsState);
@@ -59,6 +61,12 @@ class App extends Component {
     });
   };
 
+  loginHandler = () => {
+    this.setState({
+      authenticated: true
+    });
+  };
+
   nameChangedHanler = (event, id) => {
     const personIndex = this.state.persons.findIndex(p => {
       return p.id === id;
@@ -91,19 +99,28 @@ class App extends Component {
           persons={this.state.persons}
           clicked={this.deletePersonHandler}
           changed={this.nameChangedHanler}
+          isAuthenticated={this.state.authenticated}
         />
       );
     }
 
     return (
       <Aux>
-        <Cockpit
-          title={this.props.appTitle}
-          showPersons={this.state.showPersons}
-          personsLength={this.state.persons.length}
-          clicked={this.togglePersonsHandler}
-        />
-        {persons}
+        <AuthContext.Provider
+          value={{
+            authenticated: this.state.authenticated,
+            login: this.loginHandler
+          }}
+        >
+          <Cockpit
+            title={this.props.appTitle}
+            showPersons={this.state.showPersons}
+            personsLength={this.state.persons.length}
+            clicked={this.togglePersonsHandler}
+            login={this.loginHandler}
+          />
+          {persons}
+        </AuthContext.Provider>
       </Aux>
     );
     // return React.createElement('div', {className: 'App'}, React.createElement('h1', null, 'Hi, I\'m a React App!!!'));
